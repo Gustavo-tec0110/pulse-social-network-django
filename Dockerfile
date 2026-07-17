@@ -13,6 +13,7 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 RUN SECRET_KEY=collectstatic-build-key python manage.py collectstatic --noinput
+RUN chown -R pulse:pulse /app
 
 USER pulse
 
