@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Explorar · Pulse{% endblock %}
+{% block content %}
+  <section class="page-header"><div><p class="eyebrow">Descubra</p><h1>Explorar</h1></div></section>
+  <form class="search-form" method="get">
+    <label class="sr-only" for="search">Buscar pessoas e publicações</label>
+    <input id="search" type="search" name="q" value="{{ query }}" placeholder="Buscar pessoas e publicações">
+    <button class="button button-primary" type="submit">Buscar</button>
+  </form>
+  {% if people %}
+    <section class="people-section surface">
+      <div class="section-heading"><h2>Pessoas</h2>{% if query %}<span>Resultados para “{{ query }}”</span>{% endif %}</div>
+      <div class="people-grid">
+        {% for person in people %}
+          <a class="person-card" href="{% url 'profile' person.username %}">
+            {% if person.profile.avatar %}<img class="avatar avatar-lg" src="{{ person.profile.avatar.url }}" alt="">{% else %}<span class="avatar avatar-lg avatar-fallback">{{ person.username|first|upper }}</span>{% endif %}
+            <span><strong>{{ person.profile.display_name }}</strong><small>@{{ person.username }}</small><small>{{ person.profile.bio|truncatechars:70|default:"Novo no Pulse" }}</small></span>
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+  <div class="section-heading timeline-heading"><h2>Publicações recentes</h2></div>
+  <section class="timeline">
+    {% for post in page_obj %}{% include "network/_post_card.html" %}{% empty %}<div class="empty-state surface"><h2>Nenhum resultado</h2><p>Tente buscar outro termo.</p></div>{% endfor %}
+  </section>
+  {% include "network/_pagination.html" %}
+{% endblock %}

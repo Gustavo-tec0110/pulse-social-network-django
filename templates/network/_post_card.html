@@ -1,0 +1,27 @@
+<article class="post-card">
+  <a class="post-avatar" href="{% url 'profile' post.author.username %}">
+    {% if post.author.profile.avatar %}<img class="avatar" src="{{ post.author.profile.avatar.url }}" alt="Foto de {{ post.author.profile.display_name }}">{% else %}<span class="avatar avatar-fallback">{{ post.author.username|first|upper }}</span>{% endif %}
+  </a>
+  <div class="post-main">
+    <div class="post-meta">
+      <a href="{% url 'profile' post.author.username %}"><strong>{{ post.author.profile.display_name }}</strong><span>@{{ post.author.username }}</span></a>
+      <span aria-hidden="true">·</span>
+      <a href="{% url 'post-detail' post.pk %}" title="{{ post.created_at|date:'d/m/Y H:i' }}">{{ post.created_at|timesince }}</a>
+    </div>
+    <p class="post-content">{{ post.content|linebreaksbr }}</p>
+    {% if post.image %}<a href="{% url 'post-detail' post.pk %}"><img class="post-image" src="{{ post.image.url }}" alt="Imagem da publicação"></a>{% endif %}
+    <div class="post-actions">
+      <a class="post-action" href="{% url 'post-detail' post.pk %}" aria-label="Comentar"><span aria-hidden="true">◯</span><span>{{ post.comment_count|default:post.comments.count }}</span></a>
+      <form method="post" action="{% url 'toggle-like' post.pk %}">
+        {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button class="post-action {% if post.pk in liked_post_ids %}liked{% endif %}" type="submit" aria-label="Curtir"><span aria-hidden="true">♡</span><span>{{ post.like_count|default:post.likes.count }}</span></button>
+      </form>
+      <a class="post-action" href="{% url 'post-detail' post.pk %}" aria-label="Abrir publicação"><span aria-hidden="true">↗</span></a>
+      {% if post.author == user %}
+        <form method="post" action="{% url 'delete-post' post.pk %}" data-confirm="Excluir esta publicação?">
+          {% csrf_token %}<button class="post-action danger" type="submit" aria-label="Excluir"><span aria-hidden="true">⌫</span></button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</article>

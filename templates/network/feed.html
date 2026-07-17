@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Feed · Pulse{% endblock %}
+{% block content %}
+  <section class="page-header"><div><p class="eyebrow">Para você</p><h1>{{ page_title }}</h1></div></section>
+  <section class="composer surface">
+    {% if user.profile.avatar %}<img class="avatar" src="{{ user.profile.avatar.url }}" alt="">{% else %}<span class="avatar avatar-fallback">{{ user.username|first|upper }}</span>{% endif %}
+    <form method="post" action="{% url 'create-post' %}" enctype="multipart/form-data">
+      {% csrf_token %}{{ post_form.content }}
+      <div class="composer-footer"><label class="file-button" for="id_image">▧ Imagem</label>{{ post_form.image }}<span class="character-count" data-counter-output>280</span><button class="button button-primary" type="submit">Publicar</button></div>
+    </form>
+  </section>
+  <section class="timeline">
+    {% for post in page_obj %}{% include "network/_post_card.html" %}{% empty %}
+      <div class="empty-state surface"><span>✦</span><h2>Seu feed está pronto para crescer</h2><p>Siga pessoas na aba Explorar ou publique a primeira ideia.</p><a class="button button-secondary" href="{% url 'explore' %}">Encontrar pessoas</a></div>
+    {% endfor %}
+  </section>
+  {% include "network/_pagination.html" %}
+{% endblock %}

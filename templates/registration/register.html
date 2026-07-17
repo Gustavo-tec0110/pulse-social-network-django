@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Criar conta · Pulse{% endblock %}
+{% block auth_content %}
+  <section class="auth-hero auth-hero-register">
+    <div class="auth-hero-content">
+      <span class="brand-mark brand-mark-lg">P</span>
+      <p class="eyebrow">Seu espaço, sua voz</p>
+      <h1>Entre para a conversa.</h1>
+      <p>Crie seu perfil, siga pessoas e construa um feed feito para você.</p>
+    </div>
+  </section>
+  <section class="auth-panel">
+    <div class="auth-card auth-card-wide">
+      <a class="brand" href="/"><span class="brand-mark">P</span><span>Pulse</span></a>
+      <div><p class="eyebrow">Comece agora</p><h2>Crie sua conta</h2></div>
+      <form method="post" class="stacked-form">
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<small class="help-text">{{ field.help_text|safe }}</small>{% endif %}
+            {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+          </div>
+        {% endfor %}
+        <button class="button button-primary button-block" type="submit">Criar conta</button>
+      </form>
+      <p class="auth-switch">Já participa do Pulse? <a href="{% url 'login' %}">Entrar</a></p>
+    </div>
+  </section>
+{% endblock %}

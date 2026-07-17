@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Entrar · Pulse{% endblock %}
+{% block auth_content %}
+  <section class="auth-hero">
+    <div class="auth-hero-content">
+      <span class="brand-mark brand-mark-lg">P</span>
+      <p class="eyebrow">Conecte ideias. Encontre pessoas.</p>
+      <h1>O que importa acontece agora.</h1>
+      <p>Compartilhe pensamentos, acompanhe pessoas interessantes e participe da conversa.</p>
+    </div>
+  </section>
+  <section class="auth-panel">
+    <div class="auth-card">
+      <a class="brand" href="/"><span class="brand-mark">P</span><span>Pulse</span></a>
+      <div>
+        <p class="eyebrow">Bem-vindo de volta</p>
+        <h2>Entre na sua conta</h2>
+      </div>
+      {% if form.errors %}<div class="form-alert">Usuário ou senha inválidos. Tente novamente.</div>{% endif %}
+      <form method="post" class="stacked-form">
+        {% csrf_token %}
+        <div class="field"><label for="id_username">Usuário</label>{{ form.username }}</div>
+        <div class="field"><label for="id_password">Senha</label>{{ form.password }}</div>
+        <button class="button button-primary button-block" type="submit">Entrar</button>
+      </form>
+      <p class="auth-switch">Ainda não tem conta? <a href="{% url 'register' %}">Cadastre-se</a></p>
+    </div>
+  </section>
+{% endblock %}

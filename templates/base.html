@@ -1,0 +1,82 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Pulse, uma rede social construída com Django e API REST.">
+  <title>{% block title %}Pulse{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+  {% if user.is_authenticated %}
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="{% url 'feed' %}" aria-label="Pulse - início">
+          <span class="brand-mark">P</span><span>Pulse</span>
+        </a>
+        <nav class="main-nav" aria-label="Navegação principal">
+          <a href="{% url 'feed' %}" class="{% if request.resolver_match.url_name == 'feed' %}active{% endif %}">
+            <span aria-hidden="true">⌂</span> Feed
+          </a>
+          <a href="{% url 'explore' %}" class="{% if request.resolver_match.url_name == 'explore' %}active{% endif %}">
+            <span aria-hidden="true">⌕</span> Explorar
+          </a>
+          <a href="{% url 'profile' user.username %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+            <span aria-hidden="true">○</span> Perfil
+          </a>
+        </nav>
+        <div class="sidebar-account">
+          <a href="{% url 'profile' user.username %}" class="account-summary">
+            {% if user.profile.avatar %}
+              <img class="avatar avatar-sm" src="{{ user.profile.avatar.url }}" alt="">
+            {% else %}
+              <span class="avatar avatar-sm avatar-fallback">{{ user.username|first|upper }}</span>
+            {% endif %}
+            <span><strong>{{ user.get_full_name|default:user.username }}</strong><small>@{{ user.username }}</small></span>
+          </a>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button class="link-button" type="submit">Sair</button>
+          </form>
+        </div>
+      </aside>
+      <main class="content-column">
+        <header class="mobile-header">
+          <a class="brand" href="{% url 'feed' %}"><span class="brand-mark">P</span><span>Pulse</span></a>
+        </header>
+        {% if messages %}
+          <div class="messages" aria-live="polite">
+            {% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}
+          </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+      </main>
+      <aside class="right-rail">
+        <div class="rail-card">
+          <h2>Sobre o Pulse</h2>
+          <p>Uma rede social completa criada com Django, PostgreSQL e arquitetura REST.</p>
+          <a href="/api/">Explorar a API REST →</a>
+        </div>
+        <div class="rail-card muted">
+          <span>Projeto de portfólio</span>
+          <strong>Full Stack Python</strong>
+        </div>
+      </aside>
+      <nav class="mobile-nav" aria-label="Navegação móvel">
+        <a href="{% url 'feed' %}">Feed</a>
+        <a href="{% url 'explore' %}">Explorar</a>
+        <a href="{% url 'profile' user.username %}">Perfil</a>
+      </nav>
+    </div>
+  {% else %}
+    <main class="auth-layout">
+      {% block auth_content %}{% endblock %}
+    </main>
+  {% endif %}
+  <script src="{% static 'js/app.js' %}" defer></script>
+</body>
+</html>

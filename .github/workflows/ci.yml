@@ -1,0 +1,51 @@
+name: Qualidade contínua
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: pulse_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d pulse_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/pulse_test
+      SECRET_KEY: github-actions-test-key
+      DEBUG: "False"
+      ALLOWED_HOSTS: localhost
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+      - name: Validar configuração e migrações
+        run: |
+          python manage.py check
+          python manage.py check --deploy --fail-level ERROR
+          python manage.py makemigrations --check --dry-run
+          python manage.py migrate --noinput
+      - name: Executar testes
+        run: python manage.py test
+      - name: Validar arquivos estáticos
+        run: python manage.py collectstatic --noinput

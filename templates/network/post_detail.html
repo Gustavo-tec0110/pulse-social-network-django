@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Publicação de @{{ post.author.username }} · Pulse{% endblock %}
+{% block content %}
+  <section class="page-header compact"><a class="back-link" href="javascript:history.back()">←</a><div><p class="eyebrow">Conversa</p><h1>Publicação</h1></div></section>
+  <section class="timeline">{% include "network/_post_card.html" %}</section>
+  <section class="comment-composer surface">
+    <h2>Responder à publicação</h2>
+    <form method="post" action="{% url 'add-comment' post.pk %}" class="stacked-form">{% csrf_token %}{{ comment_form.content }}<div class="form-actions"><button class="button button-primary" type="submit">Comentar</button></div></form>
+  </section>
+  <section class="comments">
+    <div class="section-heading"><h2>Comentários</h2><span>{{ post.comments.count }}</span></div>
+    {% for comment in post.comments.all %}
+      <article class="comment-card surface">
+        {% if comment.author.profile.avatar %}<img class="avatar avatar-sm" src="{{ comment.author.profile.avatar.url }}" alt="">{% else %}<span class="avatar avatar-sm avatar-fallback">{{ comment.author.username|first|upper }}</span>{% endif %}
+        <div><div class="post-meta"><a href="{% url 'profile' comment.author.username %}"><strong>{{ comment.author.profile.display_name }}</strong><span>@{{ comment.author.username }}</span></a><span>·</span><span>{{ comment.created_at|timesince }}</span></div><p>{{ comment.content|linebreaksbr }}</p></div>
+      </article>
+    {% empty %}<div class="empty-state surface"><p>Seja a primeira pessoa a comentar.</p></div>{% endfor %}
+  </section>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Editar perfil · Pulse{% endblock %}
+{% block content %}
+  <section class="page-header"><div><p class="eyebrow">Sua conta</p><h1>Editar perfil</h1></div><a class="button button-secondary" href="{% url 'profile' user.username %}">Cancelar</a></section>
+  <section class="surface form-surface">
+    <form method="post" enctype="multipart/form-data" class="stacked-form">
+      {% csrf_token %}
+      <div class="form-section"><h2>Informações públicas</h2>{% for field in profile_form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>{% endfor %}</div>
+      <div class="form-section"><h2>Dados da conta</h2>{% for field in user_form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>{% endfor %}</div>
+      <div class="form-actions"><button class="button button-primary" type="submit">Salvar alterações</button><a class="button button-ghost" href="{% url 'password_change' %}">Alterar senha</a></div>
+    </form>
+  </section>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ profile_user.profile.display_name }} · Pulse{% endblock %}
+{% block content %}
+  <section class="profile-hero surface">
+    <div class="profile-cover"></div>
+    <div class="profile-body">
+      <div class="profile-topline">
+        {% if profile_user.profile.avatar %}<img class="avatar avatar-xl" src="{{ profile_user.profile.avatar.url }}" alt="Foto de {{ profile_user.profile.display_name }}">{% else %}<span class="avatar avatar-xl avatar-fallback">{{ profile_user.username|first|upper }}</span>{% endif %}
+        {% if profile_user == user %}
+          <a class="button button-secondary" href="{% url 'edit-profile' %}">Editar perfil</a>
+        {% else %}
+          <form method="post" action="{% url 'toggle-follow' profile_user.username %}">{% csrf_token %}<button class="button {% if is_following %}button-secondary{% else %}button-primary{% endif %}" type="submit">{% if is_following %}Seguindo{% else %}Seguir{% endif %}</button></form>
+        {% endif %}
+      </div>
+      <h1>{{ profile_user.profile.display_name }}</h1>
+      <p class="username">@{{ profile_user.username }}</p>
+      {% if profile_user.profile.bio %}<p class="profile-bio">{{ profile_user.profile.bio }}</p>{% endif %}
+      <div class="profile-details">{% if profile_user.profile.location %}<span>⌖ {{ profile_user.profile.location }}</span>{% endif %}{% if profile_user.profile.website %}<a href="{{ profile_user.profile.website }}" rel="noopener noreferrer">↗ {{ profile_user.profile.website|truncatechars:34 }}</a>{% endif %}<span>Ingressou em {{ profile_user.date_joined|date:"M Y" }}</span></div>
+      <div class="profile-stats"><span><strong>{{ following_count }}</strong> seguindo</span><span><strong>{{ followers_count }}</strong> seguidores</span><span><strong>{{ page_obj.paginator.count }}</strong> publicações</span></div>
+    </div>
+  </section>
+  <div class="section-heading timeline-heading"><h2>Publicações</h2></div>
+  <section class="timeline">{% for post in page_obj %}{% include "network/_post_card.html" %}{% empty %}<div class="empty-state surface"><h2>Nenhuma publicação ainda</h2><p>Quando houver novidades, elas aparecerão aqui.</p></div>{% endfor %}</section>
+  {% include "network/_pagination.html" %}
+{% endblock %}

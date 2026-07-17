@@ -1,0 +1,45 @@
+services:
+  web:
+    build: .
+    command: >-
+      sh -c "python manage.py migrate --noinput &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+    environment:
+      SECRET_KEY: local-docker-development-key
+      DEBUG: "True"
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      DATABASE_URL: postgresql://pulse:pulse@db:5432/pulse
+    volumes:
+      - .:/app
+      - pulse_media:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - pulse_network
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: pulse
+      POSTGRES_USER: pulse
+      POSTGRES_PASSWORD: pulse
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pulse -d pulse"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pulse_postgres:/var/lib/postgresql/data
+    networks:
+      - pulse_network
+
+volumes:
+  pulse_postgres:
+  pulse_media:
+
+networks:
+  pulse_network:
+    driver: bridge
