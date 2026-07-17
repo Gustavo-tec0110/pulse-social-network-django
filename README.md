@@ -2,6 +2,11 @@
 
 Rede social full stack inspirada em plataformas de microblog. O Pulse reúne autenticação, perfis, relacionamentos, feed personalizado, publicações e interações em uma aplicação responsiva com API REST.
 
+**Aplicação online:** https://pulse-social-network-django.onrender.com  
+**Conta de demonstração:** `demo` / `pulse-demo-2026`
+
+[![Qualidade contínua](https://github.com/Gustavo-tec0110/pulse-social-network-django/actions/workflows/ci.yml/badge.svg)](https://github.com/Gustavo-tec0110/pulse-social-network-django/actions/workflows/ci.yml)
+
 ## Destaques
 
 - cadastro, login, alteração de senha e edição independente do perfil;
